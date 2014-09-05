@@ -1,0 +1,28 @@
+Drop this into .twitter-credentials (in this app directory, not ~):
+
+    {
+        "consumer_key"        : "xxx",
+        "consumer_secret"     : "xxx",
+        "access_token"        : "xxx",
+        "access_token_secret" : "xxx"
+    }
+
+
+Set up a cron job:
+
+    @hourly /usr/bin/zsh --login -c "cd /path/to/Sartak-Microblog; perl -Ilib bin/import-latest"
+
+
+Move posts.psgi into dropbox and symlink it back into here. (you have dropbox running on a server right?)
+
+
+Scripts:
+    fix-language: for identifying whether a tweet is english or japanese (since they get put into separate feeds)
+
+    import-csv: for importing historical tweets, which takes the CSV that the twitter archive export provides
+
+    import-latest: use the twitter API to pull in your last few tweets
+
+    migrate-1: for migrating the database across schema changes. this example pulls "id" out of the "cruft" column (which I use to hold onto all the tweet metadata twitter gives)
+
+    unminify-urls: for resolving t.co bit.ly etc short URLs. import-latest does this automatically for t.co only (since that's how I tweet), import-csv doesn't do it at all (since it's ~expensive). this script handles all redirects not just t.co

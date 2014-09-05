@@ -1,0 +1,25 @@
+<span style="float: right">
+    <div style="display: inline-block; text-align: center">
+        <a href="/feed/micro.rss" style="text-decoration: none">
+            <img src="http://sartak.org/img/feed.png" />
+            <br>
+            all
+        </a>
+    </div>
+
+    <div style="display: inline-block; text-align: center">
+        <a href="/feed/en.rss" style="text-decoration: none">
+            <img src="http://sartak.org/img/feed.png" />
+            <br>
+            english
+        </a>
+    </div>
+
+    <div style="display: inline-block; text-align: center">
+        <a href="/feed/ja.rss" style="text-decoration: none">
+            <img src="http://sartak.org/img/feed.png" />
+            <br>
+            日本語
+        </a>
+    </div>
+</span>

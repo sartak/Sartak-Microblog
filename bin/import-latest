@@ -1,0 +1,73 @@
+#!/usr/bin/env perl
+use 5.14.0;
+use warnings;
+use Sartak::Microblog::Database;
+use Sartak::Microblog::Post;
+
+use Encode 'encode_utf8';
+use LWP::UserAgent;
+use JSON 'decode_json', 'encode_json';
+use File::Slurp 'slurp';
+use Net::Twitter;
+use DateTime::Format::Strptime;
+use HTML::Entities;
+use bigint;
+
+# Tue Oct 30 21:49:55 +0000 2012
+my $datetime_parser = DateTime::Format::Strptime->new(pattern => '%a %b %d %T %z %Y');
+
+my $twitter = Net::Twitter->new(
+    traits => [qw/OAuth API::RESTv1_1/],
+    ssl    => 1,
+    %{ decode_json(slurp(".twitter-credentials")) }
+);
+
+my $ua = LWP::UserAgent->new(max_redirect => 0);
+
+my $db = Sartak::Microblog::Database->new(
+    file => 'posts.sqlite',
+);
+
+sub unminify_url {
+    my $url = shift;
+    my $response = $ua->get($url);
+    return $response->header('Location') || $url;
+}
+
+my $max_id;
+for (1..3) {
+    my $results = $twitter->user_timeline({
+        screen_name => 'sartak',
+        ($max_id ? (max_id => $max_id) : ()),
+    });
+
+    for my $result (@$results) {
+        my $id = $result->{id};
+        $max_id = $id - 1 if !defined($max_id) || $id < $max_id;
+
+        my $text = decode_entities($result->{text});
+
+        # skip @-replies
+        next if $text =~ / ^ \.? @ /x;
+
+        $text =~ s{(https?://t\.co/\w+)}{unminify_url($1)}ge;
+
+        my $dt = $datetime_parser->parse_datetime($result->{created_at});
+
+        my $post = Sartak::Microblog::Post->new(
+            id       => $id,
+            text     => $text,
+            created  => $dt->epoch,
+            language => 'TODO',
+            cruft    => encode_json($result),
+        );
+
+        local $SIG{__WARN__} = sub {
+            my $text = shift;
+            warn $text unless $text =~ /column id is not unique/;
+        };
+
+        $db->insert_post($post);
+    }
+}
+

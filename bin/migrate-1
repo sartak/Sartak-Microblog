@@ -1,0 +1,29 @@
+#!/usr/bin/env perl
+use 5.14.0;
+use warnings;
+use Sartak::Microblog::Database;
+use Sartak::Microblog::Post;
+use JSON 'decode_json';
+
+my $old_db = Sartak::Microblog::Database->new(file => 'posts-legacy.sqlite');
+my $new_db = Sartak::Microblog::Database->new(file => 'posts-new.sqlite');
+
+my $query = "SELECT created, text, language, cruft FROM posts ";
+$query .= "ORDER BY created DESC;";
+
+my $sth = $old_db->_dbh->prepare($query);
+$sth->execute;
+
+while (my ($created, $text, $language, $cruft) = $sth->fetchrow_array) {
+    my $id = decode_json($cruft)->{id};
+
+    my $post = Sartak::Microblog::Post->new(
+        id       => $id,
+        text     => $text,
+        language => $language,
+        created  => $created,
+        cruft    => $cruft,
+    );
+
+    $new_db->insert_post($post);
+}

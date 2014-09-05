@@ -1,0 +1,48 @@
+#!/usr/bin/env perl
+use 5.14.0;
+use warnings;
+use Sartak::Microblog::Database;
+use Sartak::Microblog::Post;
+use Encode;
+use JSON 'encode_json';
+use HTML::Entities;
+use bigint;
+
+use Text::CSV_XS;
+use DateTime::Format::Strptime;
+
+@ARGV == 1 or die "usage: $0 tweets.csv";
+my $input = shift;
+
+my $db = Sartak::Microblog::Database->new(
+    file => 'posts.sqlite',
+);
+
+# 2012-01-30 21:49:55 +0000
+my $datetime_parser = DateTime::Format::Strptime->new(pattern => '%Y-%m-%d %T %z');
+
+my $csv = Text::CSV_XS->new({binary => 1});
+open my $handle, "<:encoding(utf8)", $input or die $!;
+scalar <$handle>; # drop header line
+
+while (my $row = $csv->getline($handle)) {
+    my ($tweet_id, $in_reply_to_status_id, $in_reply_to_user_id, $timestamp, $source, $text, $retweeted_status_id, $retweeted_status_user_id, $retweeted_status_timestamp, $expanded_urls) = @$row;
+    chomp $text;
+
+    my $dt = $datetime_parser->parse_datetime($timestamp)
+        or die $timestamp;
+
+    $text = decode_entities($text);
+    next if $text =~ / ^ \.? @ /x;
+
+    my $post = Sartak::Microblog::Post->new(
+        id       => $tweet_id,
+        text     => $text,
+        created  => $dt->epoch,
+        language => 'TODO',
+        cruft    => encode_json($row),
+    );
+
+    $db->insert_post($post);
+}
+

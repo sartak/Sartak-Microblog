@@ -1,0 +1,53 @@
+body {
+    font-family: "Avenir Next", "Avenir", "Helvetica Neue", "Helvetica", sans-serif;
+    background: #EEE;
+    color: ###;
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+p, ul, ol, li {
+    margin: 0;
+    padding: 0;
+}
+
+ul, ol {
+    list-style-type: none;
+}
+
+.post .text {
+    padding-top: .5em;
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+.post {
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.post:nth-child(even) {
+    background: #EEE;
+}
+
+.post + .post {
+    margin-top: 3em;
+}
+
+.post img {
+    display: block;
+}
+
+.post .extra {
+    font-size: .75em;
+    padding-top: .1em;
+    padding-bottom: .5em;
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+.post .extra a {
+    color: #AAA;
+    text-decoration: none;
+}

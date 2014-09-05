@@ -1,0 +1,49 @@
+#!/usr/bin/env perl
+use 5.14.0;
+use warnings;
+use Sartak::Microblog::Database;
+use Sartak::Microblog::Post;
+use LWP::UserAgent;
+use Encode;
+
+my $domain = "tinyurl.com";
+
+$| = 1;
+
+my $db = Sartak::Microblog::Database->new(file => 'posts.sqlite');
+my $ua = LWP::UserAgent->new(max_redirect => 0);
+
+my $query = "SELECT id FROM posts WHERE text LIKE '%$domain%'";
+
+my $rows = $db->_dbh->selectall_arrayref($query);
+my $count = @$rows;
+my $i = 0;
+for (@$rows) {
+    my ($id) = @$_;
+    my $post = $db->post($id);
+    my $text = $post->text;
+    my $old = $text;
+
+    $text =~ s{(https?://$domain/\w+)}{
+        my $response = $ua->get($1);
+        $response->header('Location') || $1
+    }ge;
+
+    if ($old eq $text) {
+        warn ++$i . "/$count: http://micro.sartak.org/post/$id\n";
+        warn "Crud! $old\n";
+        warn "\n\n";
+        next;
+    }
+
+    print ++$i . "/$count: http://micro.sartak.org/post/$id\n";
+    print encode_utf8 "$old -> $text\n";
+    print "OK? [Yn] ";
+    next if <> =~ /n/i;
+
+    $db->update_post($post, {
+        text => $text,
+    });
+
+    print "\n\n\n";
+}

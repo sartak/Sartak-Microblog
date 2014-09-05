@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <title>{{feed.title}}</title>
+
+        <link rel="stylesheet" href="/static/microblog.css" type="text/css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed/micro.rss" />
+        <meta name="viewport" content="width=device-width">
+    </head>
+    <body>
+        <ul>
+            {{#each feed.posts_ref}}
+                <li class="post">
+                    <div class="text">{{format_post_text this.text}}</div>
+                    <div class="extra">
+                        <a class="link" href="/post/{{this.id}}">{{format_date this.created "%Y-%m-%d"}} </a>
+                        <a class="link" href="https://twitter.com/sartak/status/{{this.id}}">⤴</a>
+                    </div>
+                </li>
+            {{/each}}
+        </ul>
+        <hr>
+        {{> feeds}}
+    </body>
+</html>

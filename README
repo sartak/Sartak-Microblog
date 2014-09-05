@@ -10,7 +10,7 @@ Drop this into .twitter-credentials (in this app directory, not ~):
 
 Set up a cron job:
 
-    @hourly /usr/bin/zsh --login -c "cd /path/to/Sartak-Microblog; perl -Ilib bin/import-latest"
+    @hourly /usr/bin/zsh --login -c "cd /path/to/Sartak-Microblog; perl -Ilib bin/import-latest sartak"
 
 
 Move posts.psgi into dropbox and symlink it back into here. (you have dropbox running on a server right?)

@@ -13,7 +13,7 @@
             <div class="text">{{format_post_text post.text}}</div>
             <div class="extra">
                 <a class="link" href="/post/{{post.id}}">{{format_date post.created "%Y-%m-%d"}} </a>
-                <a class="link" href="https://twitter.com/sartak/status/{{post.id}}">⤴</a>
+                <a class="link" href="https://twitter.com/sartak/status/{{post.id}}"><img src="/static/bird.png"></a>
             </div>
         </div>
         <hr>

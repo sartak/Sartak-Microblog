@@ -15,7 +15,7 @@
                     <div class="text">{{format_post_text this.text}}</div>
                     <div class="extra">
                         <a class="link" href="/post/{{this.id}}">{{format_date this.created "%Y-%m-%d"}} </a>
-                        <a class="link" href="https://twitter.com/sartak/status/{{this.id}}">⤴</a>
+                        <a class="link" href="https://twitter.com/sartak/status/{{this.id}}"><img src="/static/bird.png"></a>
                     </div>
                 </li>
             {{/each}}

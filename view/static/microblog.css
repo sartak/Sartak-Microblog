@@ -51,3 +51,13 @@ ul, ol {
     color: #AAA;
     text-decoration: none;
 }
+
+.link {
+    vertical-align: top;
+}
+
+.link img {
+    display: inline;
+    height: 16px;
+    width: 16px;
+}

@@ -67,7 +67,7 @@ for (1..3) {
 
         local $SIG{__WARN__} = sub {
             my $text = shift;
-            warn $text unless $text =~ /column id is not unique/;
+            warn $text unless $text =~ /column id is not unique|UNIQUE constraint failed: posts.id/;
         };
 
         $db->insert_post($post);

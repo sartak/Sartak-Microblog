@@ -137,14 +137,6 @@ builder {
             ];
         }
 
-        # if ($env->{PATH_INFO} eq '') {
-        #     return [
-        #         200,
-        #         ['Content-Type' => 'text/plain'],
-        #         [ '' ],
-        #     ];
-        # }
-
         return [
             404,
             [],
